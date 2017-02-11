@@ -91,6 +91,16 @@ http://jingyan.baidu.com/article/7f41ecec0e3a25593d095c26.html<br/>
 
 ## 实战
 使用app.js，将其原本的代码清空，直接使用官网给的示例：http://www.expressjs.com.cn/4x/api.html<br/>
+```
+var express = require('express');
+var app = express();
+
+app.get('/', function(req, res){
+  res.send('hello world');
+});
+
+app.listen(3000);
+```
 
 这里要用到supervisor：所以还得先安装（并不是装在项目里，而是系统里面）：http://www.cnblogs.com/pigtail/archive/2013/01/08/2851056.html<br/>
 
@@ -101,13 +111,34 @@ http://jingyan.baidu.com/article/7f41ecec0e3a25593d095c26.html<br/>
 在npm找到request：https://www.npmjs.com/package/request，示例：<br/>
 ```
 var request = require('request');
-request('http://www.google.com', function (error, response, body) {
+request('https://www.lagou.com/', function (error, response, body) {
   if (!error && response.statusCode == 200) {
     console.log(body) // Show the HTML for the Google homepage. 
   }
 })
 ```
 复制到app.js.<br/>
+
+引入cheerio</br>
+```
+var express = require('express');
+var app = express();
+var request = require('request');
+var cheerio = require('cheerio');
+
+app.get('/', function(req, res){
+request('https://www.lagou.com/', function (error, response, body) {
+  if (!error && response.statusCode == 200) {
+    var $ = cheerio.load(body);   //当前的$就是一个拿到了整个body的前端开发选择器
+    res.send("几大类："+$('.mainNavs .menu_box h2').text())
+  }
+})});
+
+app.listen(3000);
+
+console.log("it is listening!")
+```
+我们抓到的内容都返回到了request的body里面。cherrio可以获取所有的dom选择器。<br/>
 
 在使用爬虫的时候，还要使用到request的异步请求把数据给拉取过来，这样才能实现一个完整地请求。<br/>
 
@@ -133,3 +164,4 @@ app.listen(3000);
 
 console.log("it is listening!")
 ```
+
